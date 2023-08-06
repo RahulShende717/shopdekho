@@ -15,113 +15,79 @@ import CloseIcon from '@mui/icons-material/Close';
 import CreateTwoToneIcon from '@mui/icons-material/CreateTwoTone';
 import TablePagination from '@mui/material/TablePagination';
 import { useNavigate } from "react-router-dom"
+import axios from "axios";
 
 
 const UserList = () => {
+
+    const [UserListData, setUserListData]= useState([]);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        setHeaderFun();
-    }, [])
-
-    const setHeaderFun = () => {
-
         console.log("setHeaderFun called..............")
-        dispatch(setHeader({ headerTag: "User Management" }))
+        dispatch(setHeader({ headerTag: "User Management" }))  
+      }, [])
 
-    }
+  useEffect ( () => {
+    getUsers()
+  },[])
+   
 
-
-    let FiltredData = [
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
-        },
-        {
-            Name: "rahul shende",
-            UserName: "Rstar29",
-            Email: "rahulshende785@gmail.com",
-            Phone: "9422993386",
-
+const getUsers = async()=>{
+        try {           
+            const response = await axios.get(`http://localhost:30001/users`); 
+            console.log("Response From Api......",response.data);
+            if(response.data)
+            {
+                setUserListData(response.data);
+            }
+        } catch (error) {
+            console.log(error)
         }
-    ]
+    
+}
+
+    
     const [isFundActive, setIsFundActive] = useState(true);
     const navigate = useNavigate();
 
     const rahul="Rstar29"
-
+    
     const addUsers=()=>{
         navigate(`/app/addUsers/${false}`);
     }
 
-    const upadateUser=()=>{
-        navigate(`/app/addUsers/${true}`);
+    const upadateUser=(id)=>{
+        console.log("---------------------------------",id);
+        navigate(`/app/addUsers/${id}`);
+    }
+
+
+
+
+
+    const deleteUser= async (id)=>{
+        console.log(".......................................",id) 
+    try {
+        const response = await axios.delete(`http://localhost:30001/users/${id}`)
+        if(response.data){
+            console.log("users data deleted succesful.....",response.data)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
 
@@ -155,9 +121,10 @@ const UserList = () => {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody >
-                                            {FiltredData.map((step, ind) => (
+                                            {UserListData.map((step, ind) => (
                                                 <TableRow
-                                                sx={{ borderRadius:'80px' ,"&:hover": { bgcolor:"rgba(186,120,203,0.5701855742296919) " , scale:'104%' , borderRadius:'8px'} }} key={ind}
+                                                key={step._id}
+                                                sx={{ borderRadius:'80px' ,"&:hover": { bgcolor:"rgba(186,120,203,0.5701855742296919) " , scale:'101%' , borderRadius:'8px'} }} key={ind}
                                                 >
                                                     <TableCell align="center" >
                                                         <Checkbox
@@ -166,11 +133,11 @@ const UserList = () => {
                                                             inputProps={{ "aria-label": "controlled" }}
                                                         />
                                                     </TableCell>
-                                                    <TableCell align="center">{step.Name}</TableCell>
-                                                    <TableCell align="center">{step.UserName}</TableCell>
-                                                    <TableCell align="center">{step.Phone}</TableCell>
-                                                    <TableCell align="center">{step.Email}</TableCell>
-                                                    <TableCell align="center"><CloseIcon sx={{ color: 'red' }} /><CreateTwoToneIcon onClick={upadateUser} sx={{ color: 'black',paddingLeft:"30px" }} /></TableCell>
+                                                    <TableCell align="center">{step.firstname}</TableCell>
+                                                    <TableCell align="center">{step.username}</TableCell>
+                                                    <TableCell align="center">{step.phone}</TableCell>
+                                                    <TableCell align="center">{step.email}</TableCell>
+                                                    <TableCell align="center"><CloseIcon  onClick={()=>deleteUser(step._id)} sx={{ color: 'red' }} /><CreateTwoToneIcon onClick={() => upadateUser(step._id)} sx={{ color: 'black',paddingLeft:"30px" }} /></TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
